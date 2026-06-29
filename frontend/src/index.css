@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+/* THIS LINE FIXES THE BUTTON TOGLE IN TAILWIND v4 */
+@custom-variant dark (&:where(.dark, .dark *)); 
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap");
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  @apply bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50;
+}

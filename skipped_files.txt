@@ -1,0 +1,8 @@
+Skipped CSV Report
+==================
+
+Empty CSVs:
+- air_nairobi_jobs.csv
+- kpc_jobs.csv
+- living_goods_jobs.csv
+- sun_king_jobs_kenya.csv
