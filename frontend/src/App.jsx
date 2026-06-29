@@ -1,9 +1,10 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Bookmark, Building, Briefcase, Search, Sun, Moon } from 'lucide-react'; // Added Sun and Moon icons
+import { Bookmark, Building, Briefcase, Search, Sun, Moon, Menu, X } from 'lucide-react'; 
 import './App.css';
 
-// Create a context for saved jobs
+// --- CONTEXTS ---
+
 const SavedJobsContext = createContext();
 
 const SavedJobsProvider = ({ children }) => {
@@ -29,7 +30,6 @@ const SavedJobsProvider = ({ children }) => {
   );
 };
 
-// Create a context for Light/Dark Theme
 const ThemeContext = createContext();
 
 const ThemeProvider = ({ children }) => {
@@ -59,24 +59,34 @@ const ThemeProvider = ({ children }) => {
   );
 };
 
+// --- COMPONENTS ---
+
 const Navbar = () => {
   const location = useLocation();
-  const { theme, toggleTheme } = useContext(ThemeContext); // Consume theme context
+  const { theme, toggleTheme } = useContext(ThemeContext);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const closeMenu = () => setIsMenuOpen(false);
 
   return (
-    <nav className="navbar bg-indigo-700 text-white p-4 shadow-md">
+    <nav className="navbar bg-indigo-700 text-white p-4 shadow-md sticky top-0 z-50">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="navbar-brand text-2xl font-bold">CORPORATE CAREERS HUB</Link>
         
-        <div className="flex items-center space-x-6">
+        {/* Logo */}
+        <Link to="/" className="navbar-brand text-lg sm:text-2xl font-bold truncate pr-4">
+          CORPORATE CAREERS HUB
+        </Link>
+        
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-6">
           <ul className="nav-links flex space-x-4">
-            <li><Link to="/find-jobs" className={`text-white hover:text-indigo-200 ${location.pathname === '/find-jobs' || location.pathname === '/' ? 'font-bold border-b-2 border-indigo-200' : ''}`}>Find Jobs</Link></li>
-            <li><Link to="/companies" className={`text-white hover:text-indigo-200 ${location.pathname === '/companies' ? 'font-bold border-b-2 border-indigo-200' : ''}`}>Companies</Link></li>
-            <li><Link to="/saved-jobs" className={`text-white hover:text-indigo-200 ${location.pathname === '/saved-jobs' ? 'font-bold border-b-2 border-indigo-200' : ''}`}>Saved Jobs</Link></li>
-            <li><Link to="/due-jobs" className={`text-white hover:text-indigo-200 ${location.pathname === '/due-jobs' ? 'font-bold border-b-2 border-indigo-200' : ''}`}>Due Jobs</Link></li>
+            <li><Link to="/find-jobs" className={`text-white hover:text-indigo-200 transition-colors ${location.pathname === '/find-jobs' || location.pathname === '/' ? 'font-bold border-b-2 border-indigo-200' : ''}`}>Find Jobs</Link></li>
+            <li><Link to="/companies" className={`text-white hover:text-indigo-200 transition-colors ${location.pathname === '/companies' ? 'font-bold border-b-2 border-indigo-200' : ''}`}>Companies</Link></li>
+            <li><Link to="/saved-jobs" className={`text-white hover:text-indigo-200 transition-colors ${location.pathname === '/saved-jobs' ? 'font-bold border-b-2 border-indigo-200' : ''}`}>Saved Jobs</Link></li>
+            <li><Link to="/due-jobs" className={`text-white hover:text-indigo-200 transition-colors ${location.pathname === '/due-jobs' ? 'font-bold border-b-2 border-indigo-200' : ''}`}>Due Jobs</Link></li>
           </ul>
 
-          {/* Theme Toggle Button */}
           <button
             onClick={toggleTheme}
             className="p-2 rounded-xl bg-indigo-800/50 hover:bg-indigo-600 transition-all duration-200 focus:outline-none active:scale-90 border border-indigo-500/30"
@@ -89,7 +99,54 @@ const Navbar = () => {
             )}
           </button>
         </div>
+
+        {/* Mobile Navigation Controls */}
+        <div className="md:hidden flex items-center space-x-3">
+          <button
+            onClick={toggleTheme}
+            className="p-2 rounded-xl bg-indigo-800/50 hover:bg-indigo-600 transition-all duration-200 focus:outline-none"
+            aria-label="Toggle Theme"
+          >
+            {theme === 'dark' ? <Sun size={20} className="text-amber-400 fill-amber-400" /> : <Moon size={20} className="text-slate-200 fill-slate-200" />}
+          </button>
+          
+          <button 
+            onClick={toggleMenu} 
+            className="p-2 rounded-xl bg-indigo-800/50 hover:bg-indigo-600 transition-colors focus:outline-none"
+            aria-label="Toggle Menu"
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Dropdown Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden pt-4 pb-2 border-t border-indigo-600 mt-4 animate-in slide-in-from-top-2 duration-200">
+          <ul className="flex flex-col space-y-2">
+            <li>
+              <Link to="/find-jobs" onClick={closeMenu} className={`block px-4 py-2 rounded-lg ${location.pathname === '/find-jobs' || location.pathname === '/' ? 'bg-indigo-800 font-bold' : 'hover:bg-indigo-600'}`}>
+                Find Jobs
+              </Link>
+            </li>
+            <li>
+              <Link to="/companies" onClick={closeMenu} className={`block px-4 py-2 rounded-lg ${location.pathname === '/companies' ? 'bg-indigo-800 font-bold' : 'hover:bg-indigo-600'}`}>
+                Companies
+              </Link>
+            </li>
+            <li>
+              <Link to="/saved-jobs" onClick={closeMenu} className={`block px-4 py-2 rounded-lg ${location.pathname === '/saved-jobs' ? 'bg-indigo-800 font-bold' : 'hover:bg-indigo-600'}`}>
+                Saved Jobs
+              </Link>
+            </li>
+            <li>
+              <Link to="/due-jobs" onClick={closeMenu} className={`block px-4 py-2 rounded-lg ${location.pathname === '/due-jobs' ? 'bg-indigo-800 font-bold' : 'hover:bg-indigo-600'}`}>
+                Due Jobs
+              </Link>
+            </li>
+          </ul>
+        </div>
+      )}
     </nav>
   );
 };
@@ -146,7 +203,7 @@ const JobCard = ({ job }) => {
       href={job.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="job-card group block p-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ease-in-out cursor-pointer"
+      className="job-card group block p-6 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200/80 dark:border-slate-700 shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all duration-300 ease-in-out cursor-pointer flex flex-col h-full"
     >
       <div className="job-card-header flex justify-between items-start mb-4">
         <div>
@@ -177,12 +234,12 @@ const JobCard = ({ job }) => {
         </button>
       </div>
       
-      <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3">
+      <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed line-clamp-3 flex-grow">
         {job.description}
       </p>
       
       {job.isExpiringSoon && (
-        <span className="urgency-badge inline-flex items-center mt-4 px-3 py-1 text-xs font-semibold rounded-full text-rose-600 bg-rose-50 border border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20">
+        <span className="urgency-badge inline-flex items-center mt-4 px-3 py-1 text-xs font-semibold rounded-full text-rose-600 bg-rose-50 border border-rose-100 dark:bg-rose-500/10 dark:text-rose-400 dark:border-rose-500/20 w-max">
           Expiring Soon!
         </span>
       )}
@@ -190,15 +247,16 @@ const JobCard = ({ job }) => {
   );
 };
 
+// --- PAGES ---
+
 const FindJobsPage = () => {
   const [jobs, setJobs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCompany, setFilterCompany] = useState("");
   const [filterTitle, setFilterTitle] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [jobsPerPage] = useState(10);
+  const [jobsPerPage] = useState(9); 
 
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -217,25 +275,36 @@ const FindJobsPage = () => {
   }, [location.search]);
 
   const handleSearch = () => {
-    setCurrentPage(1);
+    setCurrentPage(1); 
   };
 
   const filteredJobs = jobs.filter(job => {
+    const safeTitle = job.title || "";
+    const safeCompany = job.company || "";
+    
     return (
-      job.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      job.company.toLowerCase().includes(filterCompany.toLowerCase()) &&
-      job.title.toLowerCase().includes(filterTitle.toLowerCase())
+      safeTitle.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      safeCompany.toLowerCase().includes(filterCompany.toLowerCase()) &&
+      safeTitle.toLowerCase().includes(filterTitle.toLowerCase())
     );
   });
 
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredJobs.length / jobsPerPage);
   const indexOfLastJob = currentPage * jobsPerPage;
   const indexOfFirstJob = indexOfLastJob - jobsPerPage;
   const currentJobs = filteredJobs.slice(indexOfFirstJob, indexOfLastJob);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const handlePrev = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  };
+
+  const handleNext = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  };
 
   return (
-    <div className="main-content w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="main-content w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col min-h-[80vh]">
       <SearchBar 
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -245,19 +314,40 @@ const FindJobsPage = () => {
         setFilterTitle={setFilterTitle}
         handleSearch={handleSearch}
       />
+      
       <h1 className="page-title text-3xl font-bold text-slate-800 dark:text-slate-100 my-8 text-center">Find Jobs</h1>
-      <div className="job-list grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full max-w-7xl mx-auto">
-        {currentJobs.map(job => (
-          <JobCard key={job.id} job={job} />
-        ))}
+      
+      <div className="job-list grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 w-full max-w-7xl mx-auto flex-grow">
+        {currentJobs.length > 0 ? (
+          currentJobs.map(job => <JobCard key={job.id} job={job} />)
+        ) : (
+          <p className="text-center text-slate-500 dark:text-slate-400 col-span-full">No jobs found matching your search.</p>
+        )}
       </div>
-      <div className="pagination flex justify-center space-x-2 mt-8">
-        {[...Array(Math.ceil(filteredJobs.length / jobsPerPage)).keys()].map(number => (
-          <button key={number + 1} onClick={() => paginate(number + 1)} className={`px-4 py-2 border border-slate-300 dark:border-slate-700 rounded-md hover:bg-indigo-100 dark:hover:bg-slate-700 ${currentPage === number + 1 ? 'bg-indigo-600 text-white border-indigo-600' : ''}`}>
-            {number + 1}
+
+      {totalPages > 1 && (
+        <div className="pagination flex items-center justify-center space-x-6 mt-12 py-6 border-t border-slate-200 dark:border-slate-700">
+          <button
+            onClick={handlePrev}
+            disabled={currentPage === 1}
+            className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium transition-all duration-200 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed hover:bg-indigo-700 active:scale-95"
+          >
+            Prev
           </button>
-        ))}
-      </div>
+          
+          <span className="text-slate-700 dark:text-slate-300 font-medium">
+            Page {currentPage} of {totalPages}
+          </span>
+          
+          <button
+            onClick={handleNext}
+            disabled={currentPage === totalPages}
+            className="px-6 py-2 bg-indigo-600 text-white rounded-lg font-medium transition-all duration-200 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed hover:bg-indigo-700 active:scale-95"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };
@@ -270,7 +360,7 @@ const CompaniesPage = () => {
     fetch("/jobs.json")
       .then((response) => response.json())
       .then((data) => {
-        const uniqueCompanies = [...new Set(data.map(job => job.company))];
+        const uniqueCompanies = [...new Set(data.map(job => job.company).filter(Boolean))];
         setCompanies(uniqueCompanies);
       })
       .catch((error) => console.error("Error loading companies:", error));
@@ -361,9 +451,11 @@ const DueJobsPage = () => {
   );
 };
 
+// --- MAIN APP COMPONENT ---
+
 function App() {
   return (
-    <ThemeProvider> {/* Wrap App in ThemeProvider */}
+    <ThemeProvider>
       <SavedJobsProvider>
         <Router>
           <div className="App bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-slate-50 min-h-screen transition-colors duration-300">
